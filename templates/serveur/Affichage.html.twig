@@ -1,0 +1,43 @@
+{% extends 'base.html.twig' %}
+
+
+{% block title %}Affichage{% endblock %}
+
+{% block body %}
+
+      <!-- insertion du menu - debut -->
+			<?php
+				include 'menu.html.twig';
+			?>
+			<!-- insertion du menu - fin -->
+<div class="list-group">
+  
+
+<table class="table table-hover">
+  <thead>
+    <tr>
+      <th scope="col">Liste des utilisateurs</th>
+      <th scope="col">login</th>
+      <th scope="col">password</th>
+      
+    </tr>
+  </thead>
+  <tbody>
+  {% for un_utilisateur in lst_utilisateurs %}
+    <tr class="table-active">
+      <th scope="row"></th>
+      <td>{{ un_utilisateur.login  }}</td>
+      <td>{{ un_utilisateur.password  }}</td>
+      <td><a href="/supprimerUtilisateur/{{ un_utilisateur.id }}" target="_blank"> <input type="button" class="btn btn-danger" value="Supprimer"> </a></td>
+    </tr>
+   {% endfor %}
+    
+  </tbody>
+</table>
+
+
+</div>
+
+
+
+{% endblock %}
