@@ -1,0 +1,86 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}inscription{% endblock %}
+
+{% block body %}
+
+
+
+<body>
+
+         <div class="container">
+
+         <h1> Ajouter un utilisateur </h1>
+
+         <form action="/newutilisateur" method="post">
+
+           <div class="form-group">
+
+             <label for="civilite" class="form-label">Civilite</label>
+
+             <select name="civilite" id="role" class="form-control">
+
+                 <option value="1">Madame</option>
+
+                 <option value="2">Monsieur</option>
+
+             </select>
+
+           </div>
+
+           <div class="form-group">
+
+          <label for="nom" class="form-label">login</label>
+
+             <input type="text" class="form-control" id="newlogin" aria-describedby="emailHelp" name="newlogin">
+
+           </div>
+
+           <div class="form-group">
+
+             <label for="exampleInputPassword1" class="form-label">Mot de passe</label>
+
+             <input type="password" class="form-control" id="newpassword1" name="newpassword1">
+
+           </div>
+
+           <div class="form-group">
+
+             <label for="exampleInputPassword1" class="form-label" >Confirmation mot de passe</label>
+
+             <input type="password" class="form-control" id="newpassword2" onBlur="return verifyPassword();">
+
+             <div id="reponse"> </div>
+
+           </div>
+
+           
+    
+      <button type="Confirmer" class="btn btn-primary">Confirmer</button>
+
+    </form>
+
+    </div>
+
+    <script>
+         function verifyPassword(){
+           var pw1 = document.getElementById("newpassword1").value;
+           var pw2 = document.getElementById("newpassword2").value;  
+           console.log(pw1,pw2);
+           if(pw1 == pw2 ) { 
+              document.getElementById("reponse").innerHTML = "Mot de passe saisi correct"; 
+              return true; 
+           }else{
+             document.getElementById("reponse").innerHTML = "Mot de passe saisi correct incorrect";
+           }
+           }
+    </script>
+
+  
+
+   
+
+    </body>
+
+</html>
+{% endblock %}
