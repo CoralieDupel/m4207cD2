@@ -1,46 +1,57 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Hello ServeurController!{% endblock %}
+{% block title %}S'inscrire{% endblock %}
 
 {% block body %}
+
 
 
 <body>
 
          <div class="container">
 
-         <h1> bienvenu  </h1>
+         <h1> Bienvenue !!!  </h1>
 
-         
-         <form action="/valide" method="post">
+         <form action="/validation" method="post">
 
 
            <div class="form-group">
+
           <label for="login" class="form-label mt-4">Nom</label>
-             <input type="text" class="form-control" id="login" aria-describedby="emailHelp" name="nom" placeholder="Enter nom">
+
+             <input type="text" class="form-control" id="login" aria-describedby="emailHelp" name="login" placeholder="Enter nom">
+
            </div>
+
            <div class="form-group">
+
              <label for="exampleInputPassword1" class="form-label">Password</label>
-             <input type="password" class="form-control" id="password1" name="password">
+
+             <input type="password" class="form-control" id="password" name="password">
+
            </div>
-            <button type="submit" class="btn btn-primary">Submit</button>
+            <button type="Confirmer" class="btn btn-primary">Confirmer</button>
+
            </div>
+
            
     
       
+
     </form>
+
     </div>
 
-
+    
     <!-- insertion js --- debut -->
+    
 
+    <!-- insertion js --- fin -->
 
-
-    <!-- insertion js --- fin -->  
-
-
+   
 
     </body>
 
 </html>
 {% endblock %}
+
