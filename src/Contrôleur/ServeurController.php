@@ -61,7 +61,7 @@ class ServeurController extends AbstractController
 
         $reponse = $manager -> getRepository(Utilisateur::class) -> findOneBy([ 'login' => $login]);
             if($reponse==NULL){
-                $validation="utilisateur non existant";
+                $validation="utilisateur non existant,veuillez saisir les bons identifiants";
                
                
 
@@ -190,8 +190,7 @@ class ServeurController extends AbstractController
             return $this->redirectToRoute ('login');
         
 
-        $val = 44;
-        $session -> set('situation',$val);
+        
 
         
           
@@ -230,48 +229,6 @@ class ServeurController extends AbstractController
 
 
     } 
-     /**
-     * @Route("/uploadDocument", name="uploadDocument")
-     */
-    public function uploadDocument(ManagerRegistry $doctrine, Request $request, EntityManagerInterface $em): Response
-    {
-
-		if($session->get('userId')==NULL){
-
-			return $this->redirectToRoute('login');
-
-		}else{	
-
-			$doc = new Document();
-			$doc->setLogin($request->request->get('login'));
-			$doc->setChemin("toto");
-			if($request->request->get('choixBox')=="on"){
-				$doc->setActif(1);
-			}else{
-				$doc->setActif(0);
-			}
-			$doc->setCreatedAt(new \DatetimeImmutable);
-			$doc->setType($doctrine->getRepository(Genre::class)->findOneById($request->request->get('genre')));
-			$em->persist($doc);
-			$em->flush();
-			//maj de la table acces
-			$acces = new Acces();
-			$acces->setDocument($doc);
-			$acces->setAutorisation($doctrine->getRepository(Autorisation::class)->findOneById(2));
-			$acces->setUtilisateur($doctrine->getRepository(User::class)->findOneById($session->get('idUser')));
-			$em->persist($acces);
-			$em->flush();
-			if($request->request->get('user')!="null"){
-				$acces = new Acces();
-				$acces->setDocument($doc);
-				$acces->setAutorisation($doctrine->getRepository(Autorisation::class)->findOneById(2));
-				$acces->setUtilisateur($doctrine->getRepository(User::class)->findOneById($request->request->get('user')));
-				$em->persist($acces);
-				$em->flush();
-			}
-			//5) sinon on renvoie la page demandée.
-			return $this->redirectToRoute('listefichier');
-		}
-    }
+     
+    
 }
-
