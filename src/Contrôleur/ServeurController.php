@@ -6,12 +6,16 @@ namespace App\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
+use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\Request;
 use App\Entity\Utilisateur;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Symfony\Component\HttpFoundation\Session\Session;
+use App\Entity\Document;
+
+
 
 class ServeurController extends AbstractController
 {
@@ -101,7 +105,7 @@ class ServeurController extends AbstractController
         return $this->redirectToRoute ('Affichage');
     }
     /**
-     * @Route("/inscription", name="creerutilisateur")
+     * @Route("/inscription", name="creationutilisateur")
      */
     public function inscription(Request $request,EntityManagerInterface $manager,SessionInterface $session): Response
     { 
@@ -159,18 +163,20 @@ class ServeurController extends AbstractController
      */
     public function session(Request $request,EntityManagerInterface $manager,SessionInterface $session): Response
     {
+        $Utilisateur->getId(); 
         $vs = $session -> get('login');
         $userId = $session -> get('userId');
        
-        $utilisateur = $manager -> getRepository(Utilisateur::class)->findOneById($userId);
-        if ($utilisateur==NULL){
+        $Utilisateur = $manager -> getRepository(Utilisateur::class)->findOneById($userId);
+        if ($Utilisateur==NULL){
             return $this->redirectToRoute ('identification');
         }else{
             return $this->redirectToRoute ('Affichage');
         }
 
-        //$val = 44;
-        //$session -> set('situation',$val);
+        $val = 44;
+        $session -> set('situation',$val);
+        $session -> clear ();
 
         
           
@@ -184,18 +190,88 @@ class ServeurController extends AbstractController
             return $this->redirectToRoute ('login');
         
 
-        //$val = 44;
-        //$session -> set('situation',$val);
+        $val = 44;
+        $session -> set('situation',$val);
 
         
           
     }
     
-    
+     /**
+     * @Route("/listefichier", name="listefichier")
+     */
+    public function listefichier(Request $request,EntityManagerInterface $manager,SessionInterface $session): Response
+    {
+        if($session->get('userId')==NULL){
 
-      
-    
-            
-    
+			return $this->redirectToRoute('login');
+		}else{	
+            $mesDocuments = $manager->getRepository(Document::class)->findAll();
+        return $this->render('Serveur/listefichier.html.twig',['lst_fichier' => $mesDocuments]);
+
+        }
+
+
+    } 
+      /**
+     * @Route("/ajoutfichier", name="ajoutfichier")
+     */
+    public function ajoutfichier(Request $request,EntityManagerInterface $manager,SessionInterface $session,ManagerRegistry $doctrine): Response
+    {
+        if($session->get('userId')==NULL){
+
+			return $this->redirectToRoute('login');
+		}else{	
+            return $this->render('Serveur/ajoutfichier.html.twig', [
+				'Fichiers' => $doctrine->getRepository(Fichiers::class)->findAll(),
+				'Utilisateur' => $doctrine->getRepository(Utilisateur::class)->findAll(),
+			]); 
+        }
+
+
+    } 
+     /**
+     * @Route("/uploadDocument", name="uploadDocument")
+     */
+    public function uploadDocument(ManagerRegistry $doctrine, Request $request, EntityManagerInterface $em): Response
+    {
+
+		if($session->get('userId')==NULL){
+
+			return $this->redirectToRoute('login');
+
+		}else{	
+
+			$doc = new Document();
+			$doc->setLogin($request->request->get('login'));
+			$doc->setChemin("toto");
+			if($request->request->get('choixBox')=="on"){
+				$doc->setActif(1);
+			}else{
+				$doc->setActif(0);
+			}
+			$doc->setCreatedAt(new \DatetimeImmutable);
+			$doc->setType($doctrine->getRepository(Genre::class)->findOneById($request->request->get('genre')));
+			$em->persist($doc);
+			$em->flush();
+			//maj de la table acces
+			$acces = new Acces();
+			$acces->setDocument($doc);
+			$acces->setAutorisation($doctrine->getRepository(Autorisation::class)->findOneById(2));
+			$acces->setUtilisateur($doctrine->getRepository(User::class)->findOneById($session->get('idUser')));
+			$em->persist($acces);
+			$em->flush();
+			if($request->request->get('user')!="null"){
+				$acces = new Acces();
+				$acces->setDocument($doc);
+				$acces->setAutorisation($doctrine->getRepository(Autorisation::class)->findOneById(2));
+				$acces->setUtilisateur($doctrine->getRepository(User::class)->findOneById($request->request->get('user')));
+				$em->persist($acces);
+				$em->flush();
+			}
+			//5) sinon on renvoie la page demandée.
+			return $this->redirectToRoute('listefichier');
+		}
+    }
 }
 
